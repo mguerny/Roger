@@ -36,8 +36,8 @@ disconnected = False
 @client.event
 async def on_ready():
     print("Ready")
-    message = "I'm fixed ! :partying_face: :tada:"
-    # await sendMessage(channelId_ACckChat, message)
+    message = ":eggplant:"
+    await sendMessage(channelId_ACckChat, message)
 
 
 @client.event
@@ -119,7 +119,8 @@ async def my_background_task():
 
         # locate the reconnect button if any
         reconnectButton = pyautogui.locateOnScreen('reconnect.png')
-        if reconnectButton:
+        print(reconnectButton)
+        if reconnectButton and not disconnected:
             disconnected = True
 
             # get AdminRoger role for ping
@@ -129,7 +130,7 @@ async def my_background_task():
                     adminRoger = role
             message = adminRoger.mention
             message += " Disconnection detected, waiting for command"
-            await sendMessage(channelId_RogerLog, message)
+            await sendMessage(channelId_ACckChat, message)
 
         # check each buildings for pixel RGB color
         if not disconnected:
@@ -211,7 +212,7 @@ async def my_background_task():
         buildingList = newBuildingList[:]
 
         # task runs every n seconds
-        n = 10
+        n = 15
         await asyncio.sleep(n)
 
 
