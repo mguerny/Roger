@@ -77,7 +77,7 @@ async def on_message(message):
             if role.name == 'Senior' or role.name == 'AdminRoger':
                 canUse = True
         if canUse:
-            msgList = msg.content.split(' ')
+            msgList = message.content.split(' ')
             if len(msgList) == 7:
                 buildingNames = msgList[1:]
                 text = "Building names updated :slight_smile:"
@@ -174,12 +174,6 @@ async def my_background_task():
                 # grey
                 if pixel == (94, 106, 131):
                     newBuildingList[i] = 0
-                
-                bname = ""
-                if len(buildingNames) != 0:
-                    bname = buildingNames[i]
-                else:
-                    bname = "building " + str(i+1)
 
             # display old status and new status, for debug
             print(buildingList)
@@ -193,6 +187,11 @@ async def my_background_task():
 
                 # for each building
                 for i in range(0, 6):
+
+                    if len(buildingNames) != 0:
+                        bname = buildingNames[i]
+                    else:
+                        bname = "building " + str(i + 1)
 
                     # if status has changed
                     if buildingList[i] != newBuildingList[i]:
