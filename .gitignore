@@ -1,0 +1,12 @@
+
+*.xml
+
+.idea/
+
+discord_token.txt
+
+screen.png
+
+*.pyc
+
+venv2/
