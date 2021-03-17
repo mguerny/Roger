@@ -27,6 +27,9 @@ buildingList = [0, 0, 0, 0, 0, 0]
 # building position on screenshot. Must be changed each city
 buildingPos = [[298, 345], [241, 495], [491, 588], [771, 600], [979, 500], [963, 327]]
 
+# building names, to be set for each war with setBuildings command
+buildingNames = []
+
 # if first test, don't send message since every building goes from 0gray to something else
 firstTest = True
 
@@ -43,6 +46,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     global disconnected
+    global buildingNames
 
     # annule si l'auteur du message est le bot
     if message.author == client.user:
@@ -66,6 +70,25 @@ async def on_message(message):
 
     if message.content.upper().startswith('WARSTATUS'):
         await message.channel.send(file=discord.File('screen.png'))
+
+    if message.content.upper().startswith('SETBUILDINGS'):
+        canUse = False
+        for role in message.author.roles:
+            if role.name == 'Senior' or role.name == 'AdminRoger':
+                canUse = True
+        if canUse:
+            msgList = msg.content.split(' ')
+            if len(msgList) == 7:
+                buildingNames = msgList[1:]
+                text = "Building names updated :slight_smile:"
+                await message.channel.send(text)
+            else:
+                await message.add_reaction('\N{CROSS MARK}')
+        else:
+            text = "Help, "
+            text += message.author.mention
+            text += " wants to touch me :sob:"
+            await message.channel.send(text)
 
     if message.content.upper().startswith('RECONNECT'):
         canUse = False
@@ -101,6 +124,7 @@ async def my_background_task():
     global buildingPos
     global firstTest
     global disconnected
+    global buildingNames
 
     await client.wait_until_ready()
 
@@ -150,6 +174,12 @@ async def my_background_task():
                 # grey
                 if pixel == (94, 106, 131):
                     newBuildingList[i] = 0
+                
+                bname = ""
+                if len(buildingNames) != 0:
+                    bname = buildingNames[i]
+                else:
+                    bname = "building " + str(i+1)
 
             # display old status and new status, for debug
             print(buildingList)
@@ -171,25 +201,25 @@ async def my_background_task():
                         # if nobody has the building
                         if newBuildingList[i] == 0:
                             if buildingList[i] == 1:  # 1 : was ours
-                                message += "We lost building " + str(i+1) + " :weary:\n"
+                                message += "We lost " + bname + " :weary:\n"
                             else:  # 2 : was theirs
-                                message += "They lost building " + str(i+1) + ", focus P bots :grimacing:\n"
+                                message += "They lost " + bname + ", focus P bots :grimacing:\n"
 
                         # if we have the building
                         if newBuildingList[i] == 1:
                             message += "We took "
                             if buildingList[i] == 0:  # 0 : was empty
-                                message += "empty building " + str(i+1) + " :grin:\n"
+                                message += "empty " + bname + " :grin:\n"
                             else:  # 2 : was theirs
-                                message += "their building " + str(i+1) + " " + getEmoji("pika") + "\n"
+                                message += "their " + bname + " " + getEmoji("pika") + "\n"
 
                         # if they have the building
                         if newBuildingList[i] == 2:
                             message += "They took "
                             if buildingList[i] == 0:  # 0 : was empty
-                                message += "empty building " + str(i+1) + " :angry:\n"
+                                message += "empty " + bname + " :angry:\n"
                             else:  # 1 : was ours
-                                message += "our building " + str(i+1) + " :rage:\n"
+                                message += "our " + bname + " :rage:\n"
 
                 # only if the status of one of the buildings has changed
                 if somethingMoved:
