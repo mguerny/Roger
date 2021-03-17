@@ -242,7 +242,7 @@ async def my_background_task():
         buildingList = newBuildingList[:]
 
         # task runs every n seconds
-        n = 15
+        n = 20
         await asyncio.sleep(n)
 
 
